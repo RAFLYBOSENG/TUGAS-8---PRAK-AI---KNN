@@ -6,5 +6,4 @@ joblib
 pandas
 plotly
 seaborn
-python
 gunicorn
