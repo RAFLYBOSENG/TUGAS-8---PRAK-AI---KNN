@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hasil Prediksi</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .probabilities-list {
+        list-style: none;
+        padding: 0;
+      }
+      .probabilities-list li {
+        margin-bottom: 5px;
+      }
+      .probabilities-list li strong {
+        display: inline-block;
+        width: 150px; /* Adjust as needed for alignment */
+      }
+    </style>
+  </head>
+  <body class="container py-5">
+    <h2 class="mb-4">Hasil Prediksi</h2>
+    <p>Gambar yang diupload adalah: <strong>{{ result }}</strong></p>
+
+    {% if probabilities %}
+    <h5>Probabilitas Prediksi:</h5>
+    <ul class="probabilities-list">
+      {% for class_name, probability in probabilities.items() %}
+      <li><strong>{{ class_name }}:</strong> {{ "%.2f" | format(probability) }}%</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <img
+      src="{{ url_for('static', filename='uploads/' + image) }}"
+      width="300"
+      class="img-thumbnail"
+    />
+    <br /><br />
+    <a href="/" class="btn btn-secondary">Upload Lagi</a>
+  </body>
+</html>

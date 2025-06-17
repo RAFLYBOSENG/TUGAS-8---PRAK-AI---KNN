@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Klasifikasi Sampah</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #0d6efd;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            margin: 20px 0;
+            display: none;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .btn-primary {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .action-buttons .btn {
+            flex: 1;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <h1 class="text-center mb-4">Klasifikasi Jenis Sampah</h1>
+        
+        <div class="action-buttons">
+            <a href="/analysis" class="btn btn-info">
+                <i class="fas fa-chart-bar"></i> Lihat Grafik Analisis
+            </a>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="upload-area" id="dropZone">
+                <p class="mb-2">Klik atau seret gambar ke sini</p>
+                <input type="file" name="file" id="fileInput" accept="image/*" class="d-none">
+                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                    Pilih Gambar
+                </button>
+            </div>
+            
+            <img id="preview" class="preview-image">
+            
+            <button type="submit" class="btn btn-primary" id="predictBtn" disabled>
+                Prediksi
+            </button>
+        </form>
+
+        {% if prediction %}
+        <div class="result-box alert alert-success" id="resultBox">
+            <h4 class="alert-heading">Hasil Prediksi:</h4>
+            <p>Jenis Sampah: <strong>{{ prediction }}</strong></p>
+            <p>Tingkat Kepercayaan: <strong>{{ "%.2f"|format(confidence) }}%</strong></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const predictBtn = document.getElementById('predictBtn');
+        const resultBox = document.getElementById('resultBox');
+
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            handleFile(e.target.files[0]);
+        });
+
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#0d6efd';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ddd';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ddd';
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    predictBtn.disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Show result box if prediction exists
+        if (resultBox) {
+            resultBox.style.display = 'block';
+        }
+    </script>
+  </body>
+</html>
